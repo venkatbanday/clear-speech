@@ -4,7 +4,7 @@ Learn what to say, and how to say it clearly.
 
 Clear Speech is a free speaking and articulation practice app that runs entirely in your browser. You hear someone say something, choose a reply, read it aloud, and get instant feedback on your words, your pace and your pauses.
 
-Live app: https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/
+Live app: https://venkatbanday.github.io/clear-speech/
 
 Created by Venkateswara Rao Banday, built with Claude (Anthropic).
 
@@ -41,7 +41,7 @@ On GitHub Pages
 
 Upload index.html to a public repository.
 Go to Settings, then Pages, choose Deploy from a branch, select main and / (root), and save.
-After about a minute your app is live at https://YOUR-USERNAME.github.io/YOUR-REPOSITORY/.
+After about a minute your app is live at https://venkatbanday.github.io/clear-speech//.
 Browser support
 Browser	Support
 Chrome, Edge (computer and Android)	Full
