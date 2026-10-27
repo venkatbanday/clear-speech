@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clear Speech – articulation practice</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>">
+<style>
+:root{
+  --bg:#f3f6f4;--surface:#ffffff;--ink:#16211d;--muted:#5d6b65;--line:#d5ded9;
+  --accent:#0f6b5c;--accent-ink:#ffffff;--good:#1a7f4b;--goodbg:#d9f2e3;--bad:#b3261e;--badbg:#fbdcd8;--warn:#8a5a00;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101614;--surface:#18211e;--ink:#e8f0ec;--muted:#98a8a1;--line:#2c3a35;
+  --accent:#4fd1b5;--accent-ink:#06211b;--good:#6fdc9f;--goodbg:#173a28;--bad:#ff8f86;--badbg:#431d1a;--warn:#f0c060;}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:17px/1.55 Georgia,"Iowan Old Style",serif;
+  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+main{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:1.7rem;margin:.2em 0 .1em;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 18px;font-family:system-ui,sans-serif;font-size:.95rem}
+.bar,.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.bar{margin-bottom:14px}
+button,select,textarea{font:600 .95rem system-ui,sans-serif;color:var(--ink)}
+button,select{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.rec.on{background:var(--bad);border-color:var(--bad);color:#fff;animation:pulse 1.2s infinite}
+@keyframes pulse{50%{opacity:.75}}
+@media (prefers-reduced-motion:reduce){button.rec.on{animation:none}}
+.panel{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:20px;margin-bottom:14px}
+#target{font-size:1.75rem;line-height:1.5;margin:0 0 16px}
+#target span{padding:0 2px;border-radius:4px}
+#target .ok{background:var(--goodbg);color:var(--good)}
+#target .miss{background:var(--badbg);color:var(--bad);text-decoration:underline wavy}
+.hint{font:.85rem system-ui,sans-serif;color:var(--muted)}
+#live{min-height:1.6em;font-style:italic;color:var(--muted);margin:12px 0 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.stat{text-align:center;border:1.5px solid var(--line);border-radius:12px;padding:12px 6px;background:var(--bg)}
+.stat b{display:block;font-size:1.8rem;font-family:Georgia,serif}
+.stat small{font:.8rem system-ui,sans-serif;color:var(--muted)}
+#tips{margin:0;padding-left:1.2em;font-family:system-ui,sans-serif;font-size:.95rem}
+#tips li{margin:.3em 0}
+textarea{width:100%;min-height:64px;border:1.5px solid var(--line);border-radius:10px;padding:10px;background:var(--bg);font-weight:400}
+.foot{font:.8rem system-ui,sans-serif;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+label.sl{font:.85rem system-ui,sans-serif;color:var(--muted);display:flex;gap:6px;align-items:center}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <h1>Clear Speech</h1>
+  <p class="sub">Read the sentence aloud, get instant feedback on accuracy and pace, then try again.</p>
+
+  <div class="bar">
+    <select id="level" aria-label="Level"></select>
+    <button id="shuffle">Next sentence</button>
+    <button id="custom-toggle">Use my own text</button>
+  </div>
+
+  <div id="custom" class="panel" hidden>
+    <textarea id="custom-text" placeholder="Type or paste a sentence you want to practice"></textarea>
+    <div class="row" style="margin-top:8px"><button id="custom-use" class="primary">Practice this</button></div>
+  </div>
+
+  <div class="panel">
+    <p id="target" aria-live="polite"></p>
+    <div class="row">
+      <button id="listen">Listen</button>
+      <label class="sl">Speed <input type="range" id="rate" min="0.5" max="1.2" step="0.1" value="0.9"></label>
+      <button id="rec" class="primary rec">Start speaking</button>
+      <button id="retry">Reset</button>
+    </div>
+    <p id="live" aria-live="polite"></p>
+    <p id="unsupported" class="hint" hidden>Speech recognition isn’t available in this browser. Open this page in Chrome, Edge or Safari over https to get feedback.</p>
+  </div>
+
+  <div id="result" class="panel" hidden>
+    <div class="stats">
+      <div class="stat"><b id="s-acc">0%</b><small>Accuracy</small></div>
+      <div class="stat"><b id="s-wpm">0</b><small>Words per minute</small></div>
+      <div class="stat"><b id="s-best">0%</b><small>Best on this sentence</small></div>
+    </div>
+    <ul id="tips"></ul>
+  </div>
+
+  <div class="foot">
+    <span id="progress"></span>
+    <button id="clear" style="padding:4px 10px;font-weight:400">Clear progress</button>
+  </div>
+</main>
+
+<script>
+const BANK={
+  "Warm-up: short and clear":[
+    "The quick brown fox jumps over the lazy dog.",
+    "Please call me back when you have a moment.",
+    "I would like to order a large coffee with milk.",
+    "Good communication begins with clear pronunciation.",
+    "Take a deep breath, slow down, and speak with confidence."],
+  "Tongue twisters":[
+    "She sells seashells by the seashore.",
+    "Peter Piper picked a peck of pickled peppers.",
+    "How can a clam cram in a clean cream can?",
+    "Red lorry, yellow lorry, red lorry, yellow lorry.",
+    "Unique New York, you know you need unique New York.",
+    "Six slippery snails slid slowly seaward.",
+    "Betty Botter bought some butter, but she said the butter’s bitter."],
+  "Professional":[
+    "Thank you for joining today’s meeting, let’s begin with a brief overview.",
+    "I appreciate your feedback and will follow up with a detailed plan by Friday.",
+    "Our team is committed to delivering reliable results on schedule.",
+    "Could you please clarify the requirements before we proceed?",
+    "The quarterly report shows steady growth across all regions."],
+  "Longer passages":[
+    "Public speaking is a skill that improves with practice, so speak slowly, pause between ideas, and finish every word.",
+    "When you articulate each consonant clearly and keep a steady rhythm, your audience understands you without effort.",
+    "Confidence comes from preparation: know your message, practice out loud, and listen carefully to your own voice."]
+};
+const $=id=>document.getElementById(id);
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+let current="",rec=null,listening=false,startT=0,finalText="",interim="",bestMap={},stats={attempts:0,days:[]};
+
+// ---------- storage (safe) ----------
+function load(){try{bestMap=JSON.parse(localStorage.getItem("cs_best")||"{}");stats=JSON.parse(localStorage.getItem("cs_stats")||'{"attempts":0,"days":[]}')}catch(e){}}
+function save(){try{localStorage.setItem("cs_best",JSON.stringify(bestMap));localStorage.setItem("cs_stats",JSON.stringify(stats))}catch(e){}}
+function showProgress(){
+  const d=new Set(stats.days);let streak=0,t=new Date();
+  while(d.has(t.toDateString())){streak++;t.setDate(t.getDate()-1)}
+  $("progress").textContent=stats.attempts+" attempts · "+streak+"-day streak";
+}
+
+// ---------- text helpers ----------
+const norm=w=>w.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9']/g,"");
+const words=s=>s.split(/\s+/).filter(Boolean);
+function lev(a,b){const m=[];for(let i=0;i<=a.length;i++){m[i]=[i];}for(let j=0;j<=b.length;j++)m[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)
+    m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length]}
+const same=(a,b)=>a===b||(a.length>=5&&b.length>=5&&lev(a,b)<=1);
+
+function align(target,spoken){
+  const n=target.length,m=spoken.length,L=Array.from({length:n+1},()=>Array(m+1).fill(0));
+  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++)
+    L[i][j]=same(target[i-1],spoken[j-1])?L[i-1][j-1]+1:Math.max(L[i-1][j],L[i][j-1]);
+  const hit=Array(n).fill(false);let i=n,j=m;
+  while(i>0&&j>0){
+    if(same(target[i-1],spoken[j-1])){hit[i-1]=true;i--;j--}
+    else if(L[i-1][j]>=L[i][j-1])i--;else j--;
+  }
+  return hit;
+}
+
+// ---------- UI ----------
+function renderTarget(hits){
+  const el=$("target");el.innerHTML="";
+  words(current).forEach((w,i)=>{
+    const s=document.createElement("span");s.textContent=w;
+    if(hits)s.className=hits[i]?"ok":"miss";
+    el.append(s," ");
+  });
+}
+function setSentence(t){
+  current=t;renderTarget();$("result").hidden=true;$("live").textContent="";finalText="";interim="";
+}
+function pick(){
+  const list=BANK[$("level").value];let t;
+  do{t=list[Math.floor(Math.random()*list.length)]}while(t===current&&list.length>1);
+  setSentence(t);
+}
+
+// ---------- listen (model voice) ----------
+$("listen").onclick=()=>{
+  if(!("speechSynthesis" in window))return;
+  speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(current);u.lang="en-US";u.rate=parseFloat($("rate").value);
+  speechSynthesis.speak(u);
+};
+
+// ---------- record ----------
+function startRec(){
+  if(!SR)return;
+  speechSynthesis.cancel();
+  rec=new SR();rec.lang="en-US";rec.interimResults=true;rec.continuous=true;rec.maxAlternatives=1;
+  finalText="";interim="";startT=0;
+  rec.onstart=()=>{listening=true;$("rec").textContent="Stop";$("rec").classList.add("on");$("live").textContent="Listening… read the sentence now."};
+  rec.onspeechstart=()=>{if(!startT)startT=Date.now()};
+  rec.onresult=e=>{
+    if(!startT)startT=Date.now();
+    interim="";
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      const t=e.results[i][0].transcript;
+      if(e.results[i].isFinal)finalText+=t+" ";else interim+=t;
+    }
+    $("live").textContent="“"+(finalText+interim).trim()+"”";
+  };
+  rec.onerror=e=>{
+    const msg={"not-allowed":"Microphone access was blocked. Allow the mic in your browser settings and try again.",
+      "no-speech":"No speech detected. Move closer to the mic and try again.",
+      "audio-capture":"No microphone found."}[e.error]||"Recognition error: "+e.error;
+    $("live").textContent=msg;
+  };
+  rec.onend=()=>{listening=false;$("rec").textContent="Start speaking";$("rec").classList.remove("on");finish()};
+  try{rec.start()}catch(e){}
+}
+function stopRec(){if(rec&&listening)rec.stop()}
+$("rec").onclick=()=>listening?stopRec():startRec();
+
+// ---------- feedback ----------
+function finish(){
+  const spokenRaw=(finalText+interim).trim();
+  if(!spokenRaw)return;
+  const dur=Math.max((Date.now()-(startT||Date.now()))/1000,1);
+  const tw=words(current),tn=tw.map(norm),sn=words(spokenRaw).map(norm).filter(Boolean);
+  const hits=align(tn,sn),got=hits.filter(Boolean).length;
+  const acc=Math.round(got/tw.length*100),wpm=Math.round(sn.length/dur*60);
+  renderTarget(hits);
+  $("result").hidden=false;$("s-acc").textContent=acc+"%";$("s-wpm").textContent=wpm;
+  const prev=bestMap[current]||0;bestMap[current]=Math.max(prev,acc);$("s-best").textContent=bestMap[current]+"%";
+  stats.attempts++;const today=new Date().toDateString();if(!stats.days.includes(today))stats.days.push(today);
+  save();showProgress();
+
+  const tips=[];
+  const missed=tw.filter((_,i)=>!hits[i]).map(w=>w.replace(/[^\w’'-]/g,""));
+  if(acc>=95)tips.push("Excellent. Every word came through clearly. Try the next sentence or raise the difficulty.");
+  else if(acc>=75)tips.push("Good attempt. Most words were clear; focus on the highlighted ones below.");
+  else tips.push("Slow down and say each word fully. Use Listen at a slower speed, then repeat after it.");
+  if(missed.length)tips.push("Practise these words on their own, exaggerating the consonants: "+missed.slice(0,8).join(", ")+".");
+  if(sn.length>=4){
+    if(wpm>170)tips.push("You’re rushing at "+wpm+" words per minute. Aim for 110–160 and pause briefly at commas.");
+    else if(wpm<90)tips.push("Your pace is slow at "+wpm+" words per minute. Aim for 110–160 with a steady rhythm.");
+    else tips.push("Your pace of "+wpm+" words per minute is in a comfortable range.");
+  }
+  if(sn.length>tw.length+2)tips.push("You added extra words. Stick to the sentence as written.");
+  const ul=$("tips");ul.innerHTML="";tips.forEach(t=>{const li=document.createElement("li");li.textContent=t;ul.append(li)});
+}
+
+// ---------- wiring ----------
+Object.keys(BANK).forEach(k=>{const o=document.createElement("option");o.textContent=k;$("level").append(o)});
+$("level").onchange=pick;$("shuffle").onclick=pick;$("retry").onclick=()=>setSentence(current);
+$("custom-toggle").onclick=()=>{$("custom").hidden=!$("custom").hidden};
+$("custom-use").onclick=()=>{const t=$("custom-text").value.trim();if(t){setSentence(t);$("custom").hidden=true}};
+$("clear").onclick=()=>{bestMap={};stats={attempts:0,days:[]};save();showProgress();$("result").hidden=true};
+if(!SR){$("unsupported").hidden=false;$("rec").disabled=true}
+load();showProgress();pick();
+</script>
+</body>
+</html>
