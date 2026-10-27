@@ -44,6 +44,9 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid 
 #target span:hover{text-decoration:underline dotted}
 #target .ok{background:var(--goodbg);color:var(--good)}
 #target .miss{background:var(--badbg);color:var(--bad)}
+#target .sub{background:rgba(255,170,40,.32)}
+.pz{font:500 .72rem var(--sans);font-style:normal;padding:2px 8px;border-radius:999px;margin:0 3px;vertical-align:middle;background:var(--goodbg);color:var(--good)}
+.pz.bad{background:rgba(255,170,40,.32);color:inherit}
 .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .mic{width:74px;height:74px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--accent),#8a6bff);color:#fff;display:grid;place-items:center;box-shadow:0 8px 24px -6px var(--accent);position:relative}
 .mic svg{width:30px;height:30px}
@@ -113,8 +116,9 @@ select{border:1px solid var(--line);background:var(--card);color:var(--ink);bord
   <div class="res">
     <div class="ring"><svg width="96" height="96"><circle cx="48" cy="48" r="40" fill="none" stroke="var(--line)" stroke-width="9"/><circle id="arc" cx="48" cy="48" r="40" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/></svg><b id="s-acc">0%</b></div>
     <div><div class="stars" id="stars"></div>
-      <div class="kv"><div><b id="s-wpm">0</b><small>words / min</small></div><div><b id="s-best">0%</b><small>your best</small></div></div></div>
+      <div class="kv"><div><b id="s-wpm">0</b><small>words / min</small></div><div><b id="s-best">0%</b><small>your best</small></div><div><b id="s-flow">–</b><small>pauses</small></div></div></div>
   </div>
+  <p class="hint" style="margin:12px 0 0">Green: clear · Amber: heard as a different word (tap it to hear the right one) · Red: skipped · ⏸: pause</p>
   <ul id="tips"></ul>
 </section>
 
@@ -205,17 +209,25 @@ const words=s=>s.split(/\s+/).filter(Boolean);
 function lev(a,b){const m=[];for(let i=0;i<=a.length;i++)m[i]=[i];for(let j=0;j<=b.length;j++)m[0][j]=j;
   for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length]}
 const same=(a,b)=>a===b||(a.length>=5&&b.length>=5&&lev(a,b)<=1);
-function align(t,s){const n=t.length,m=s.length,L=Array.from({length:n+1},()=>Array(m+1).fill(0));
-  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++)L[i][j]=same(t[i-1],s[j-1])?L[i-1][j-1]+1:Math.max(L[i-1][j],L[i][j-1]);
-  const h=Array(n).fill(false);let i=n,j=m;
-  while(i>0&&j>0){if(same(t[i-1],s[j-1])){h[i-1]=true;i--;j--}else if(L[i-1][j]>=L[i][j-1])i--;else j--}return h}
-
+function align(t,s){const n=t.length,m=s.length,D=Array.from({length:n+1},()=>Array(m+1).fill(0));
+  for(let i=0;i<=n;i++)D[i][0]=i;for(let j=0;j<=m;j++)D[0][j]=j;
+  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++)D[i][j]=Math.min(D[i-1][j]+1,D[i][j-1]+1,D[i-1][j-1]+(same(t[i-1],s[j-1])?0:1));
+  const st=Array(n).fill(null).map(()=>({k:"miss"}));let i=n,j=m,extra=0;
+  while(i>0||j>0){
+    if(i>0&&j>0&&D[i][j]===D[i-1][j-1]+(same(t[i-1],s[j-1])?0:1)){st[i-1]=same(t[i-1],s[j-1])?{k:"ok"}:{k:"sub",h:s[j-1]};i--;j--}
+    else if(i>0&&D[i][j]===D[i-1][j]+1){i--}
+    else{extra++;j--}
+  }
+  return{st,extra}}
 function speak(t,r=1,p=1){if(!("speechSynthesis" in window))return;speechSynthesis.cancel();
   const u=new SpeechSynthesisUtterance(t);u.lang=$("accent").value;u.rate=r;u.pitch=p;speechSynthesis.speak(u)}
 
-function renderTarget(h){const el=$("target");el.innerHTML="";
-  words(current).forEach((w,i)=>{const s=document.createElement("span");s.textContent=w;s.title="Tap to hear this word";
-    if(h)s.className=h[i]?"ok":"miss";s.onclick=()=>speak(w.replace(/[^\w’'-]/g,""),.6);el.append(s," ")})}
+function renderTarget(st,pm){const el=$("target");el.innerHTML="";
+  words(current).forEach((w,i)=>{const sp=document.createElement("span");sp.textContent=w;sp.title="Tap to hear this word";
+    const x=st&&st[i];if(x){sp.className=x.k;if(x.k==="sub")sp.title="Heard “"+x.h+"”. Tap to hear the right word."}
+    sp.onclick=()=>speak(w.replace(/[^\w’'-]/g,""),.6);el.append(sp);
+    const g=pm&&pm[i];if(g){const e=document.createElement("em");e.className="pz"+(g.kind==="good"?"":" bad");e.textContent=g.kind==="missing"?"⏸ add a pause":"⏸ "+g.dur.toFixed(1)+"s";el.append(e)}
+    el.append(" ")})}
 function setSentence(t){current=t;renderTarget();$("result").hidden=true;finalText="";interim="";
   $("live").textContent="Tap the microphone, then read the sentence. Tap any word to hear it slowly."}
 
@@ -232,9 +244,36 @@ function next(){const list=(mode==="conv"?CONV:DRILL)[cat];let t;
     const box=$("replies");box.innerHTML="";replies.forEach((r,i)=>{const b=document.createElement("button");b.className="chip";b.textContent="Reply "+(i+1);b.onclick=()=>showReply(i);box.append(b)});showReply(0)}
   else setSentence(t)}
 
+let aud=null;
+function startMeter(){aud=null;if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)return;
+  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
+    if(!listening){stream.getTracks().forEach(t=>t.stop());return}
+    const ctx=new (window.AudioContext||window.webkitAudioContext)(),an=ctx.createAnalyser();an.fftSize=1024;ctx.createMediaStreamSource(stream).connect(an);
+    const buf=new Float32Array(an.fftSize),lv=[];
+    const id=setInterval(()=>{an.getFloatTimeDomainData(buf);let q=0;for(const v of buf)q+=v*v;lv.push(Math.sqrt(q/buf.length))},50);
+    aud={lv,stop(){clearInterval(id);stream.getTracks().forEach(t=>t.stop());ctx.close()}}}).catch(()=>{})}
+function runs(v){const r=[];let a=0;for(let i=1;i<=v.length;i++)if(i===v.length||v[i]!==v[a]){r.push({v:v[a],a,n:i-a});a=i}return r}
+function pauses(lv){if(!lv||lv.length<20)return null;
+  const so=[...lv].sort((a,b)=>a-b),noise=so[Math.floor(so.length*.1)],peak=so[Math.floor(so.length*.95)];if(peak<.01)return null;
+  const thr=noise+(peak-noise)*.18,v=lv.map(x=>x>thr);
+  runs(v).forEach(x=>{if(x.v&&x.n<3)for(let i=x.a;i<x.a+x.n;i++)v[i]=false});
+  let r=runs(v);r.forEach((x,k)=>{if(!x.v&&x.n<4&&k>0&&k<r.length-1)for(let i=x.a;i<x.a+x.n;i++)v[i]=true});
+  r=runs(v);const f=r.findIndex(x=>x.v);if(f<0)return null;
+  const l=r.length-1-[...r].reverse().findIndex(x=>x.v),tot=r.filter(x=>x.v).reduce((a,x)=>a+x.n,0);let acc=0;const gaps=[];
+  for(let k=f;k<=l;k++){const x=r[k];if(x.v)acc+=x.n;else if(x.n>=4)gaps.push({dur:x.n*.05,frac:acc/tot})}
+  return{gaps,lead:f>0?r[0].n*.05:0}}
+function hint(t,h){const r=re=>t.replace(re,"")===h.replace(re,"");
+  if(h&&t.startsWith(h)&&t.length>h.length)return "Finish the ending of the word.";
+  if(/th/.test(t)&&!/th/.test(h))return "For “th”, put the tip of your tongue lightly between your teeth.";
+  if(r(/[rl]/g))return "R curls the tongue back without touching; L touches the ridge behind your top teeth.";
+  if(r(/[vw]/g))return "V: top teeth touch the lower lip. W: round your lips.";
+  if(r(/(sh|ch|s|j)/g))return "SH and CH use rounded lips; S is a thin hiss behind the teeth.";
+  if(r(/[pb]/g))return "P is a puff of air; B adds your voice.";
+  return "Say it slowly, one syllable at a time, then at normal speed."}
+
 function startRec(){if(!SR)return;speechSynthesis.cancel();
   rec=new SR();rec.lang=$("accent").value;rec.interimResults=true;rec.continuous=true;finalText="";interim="";startT=0;
-  rec.onstart=()=>{listening=true;$("rec").classList.add("on");$("live").textContent="Listening… read the sentence now, then tap again."};
+  rec.onstart=()=>{listening=true;$("rec").classList.add("on");$("live").textContent="Listening… read the sentence now, then tap again.";startMeter()};
   rec.onspeechstart=()=>{if(!startT)startT=Date.now()};
   rec.onresult=e=>{if(!startT)startT=Date.now();interim="";
     for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)finalText+=t+" ";else interim+=t}
@@ -244,33 +283,58 @@ function startRec(){if(!SR)return;speechSynthesis.cancel();
   try{rec.start()}catch(e){}}
 $("rec").onclick=()=>listening?rec.stop():startRec();
 
-function finish(){const raw=(finalText+interim).trim();if(!raw)return;
-  const dur=Math.max((Date.now()-(startT||Date.now()))/1000,1),tw=words(current),tn=tw.map(norm),sn=words(raw).map(norm).filter(Boolean);
-  const h=align(tn,sn),acc=Math.round(h.filter(Boolean).length/tw.length*100),wpm=Math.round(sn.length/dur*60);
-  renderTarget(h);$("result").hidden=false;$("s-acc").textContent=acc+"%";$("s-wpm").textContent=wpm;
+function finish(){const A=aud;aud=null;if(A)A.stop();
+  const raw=(finalText+interim).trim();if(!raw)return;
+  const dur=Math.max((Date.now()-(startT||Date.now()))/1000,1),tw=words(current),n=tw.length,tn=tw.map(norm),sn=words(raw).map(norm).filter(Boolean),cw=w=>w.replace(/[^\w’'-]/g,"");
+  const{st,extra}=align(tn,sn),acc=Math.round(st.filter(x=>x.k==="ok").length/n*100),wpm=Math.round(sn.length/dur*60);
+  const punct=tw.map((w,i)=>i<n-1&&/[,;:.!?]$/.test(w)),pa=A?pauses(A.lv):null,pm={},pt=[];let bad=0;
+  if(pa){pa.gaps.filter(g=>g.dur>=.2).forEach(g=>{
+      const idx=Math.min(n-2,Math.max(0,Math.round(g.frac*n)-1));let at=-1;
+      for(const d of[0,1,-1])if(idx+d>=0&&punct[idx+d]){at=idx+d;break}
+      g.idx=at>=0?at:idx;g.at=at;g.kind=g.dur>1.2?"long":at>=0?(g.dur<.3?"short":"good"):(g.dur>=.45?"mid":"ok");
+      if(g.kind!=="ok")pm[g.idx]=g});
+    punct.forEach((p,i)=>{if(p&&!pm[i]&&n>4)pm[i]={kind:"missing"}})}
+  renderTarget(st,pm);$("result").hidden=false;$("s-acc").textContent=acc+"%";$("s-wpm").textContent=wpm;
   $("arc").style.strokeDashoffset=251.3*(1-acc/100);
-  const st=acc>=90?3:acc>=75?2:acc>=50?1:0;$("stars").textContent="★".repeat(st)+"☆".repeat(3-st);
+  const sr=acc>=90?3:acc>=75?2:acc>=50?1:0;$("stars").textContent="★".repeat(sr)+"☆".repeat(3-sr);
   bestMap[current]=Math.max(bestMap[current]||0,acc);$("s-best").textContent=bestMap[current]+"%";
   stats.attempts++;const d=new Date().toDateString();if(!stats.days.includes(d))stats.days.push(d);save();pills();
-  const miss=tw.filter((_,i)=>!h[i]).map(w=>w.replace(/[^\w’'-]/g,"")),tips=[];
-  tips.push(acc>=95?"Excellent. Every word came through clearly. Move on to the next one.":acc>=75?"Good attempt. Most words were clear. Work on the red words.":"Slow down and say every word fully. Hear the model, then repeat it like an echo.");
-  if(miss.length)tips.push("Tap these red words to hear them, then say each one slowly: "+miss.slice(0,8).join(", ")+".");
-  if(sn.length>=4)tips.push(wpm>170?"You’re rushing at "+wpm+" words per minute. Aim for 110–160 and pause at commas.":wpm<90?"Your pace is slow at "+wpm+" words per minute. Aim for 110–160 with a steady rhythm.":"Your pace of "+wpm+" words per minute is comfortable.");
-  if(sn.length>tw.length+2)tips.push("You added extra words. Try to say the sentence exactly as written.");
-  const ul=$("tips");ul.innerHTML="";tips.forEach(t=>{const li=document.createElement("li");li.textContent=t;ul.append(li)});
+  const tips=[];
+  tips.push(acc>=95?"Excellent. Every word came through clearly. Move on to the next one.":acc>=75?"Good attempt. Most words were clear. Work on the highlighted words.":"Slow down and say every word fully. Hear the model, then repeat it like an echo.");
+  st.forEach((x,i)=>{if(x.k==="sub"&&tips.length<5)tips.push("“"+cw(tw[i])+"” sounded like “"+x.h+"”. "+hint(tn[i],x.h))});
+  const sk=tw.filter((_,i)=>st[i].k==="miss").map(cw);if(sk.length)tips.push("Skipped or unclear: "+sk.slice(0,6).join(", ")+". Tap them to hear each word, then say them slowly.");
+  if(extra>2)tips.push("You added extra words. Say the sentence exactly as written.");
+  if(sn.length>=4)tips.push(wpm>170?"You’re rushing at "+wpm+" words per minute. Aim for 110–160.":wpm<90?"Your pace is slow at "+wpm+" words per minute. Aim for 110–160 with a steady rhythm.":"Your pace of "+wpm+" words per minute is comfortable.");
+  if(pa){
+    if(pa.lead>2.5)tips.push("You waited "+pa.lead.toFixed(1)+" seconds before starting. Take a breath, then begin within a second or two.");
+    pa.gaps.forEach(g=>{const w=cw(tw[g.idx]||"");
+      if(g.kind==="long"){bad++;tips.push("Long pause of "+g.dur.toFixed(1)+" seconds near “"+w+"”. Keep the flow and breathe at commas or full stops.")}
+      else if(g.kind==="mid"){bad++;tips.push("You paused for "+g.dur.toFixed(1)+" seconds after “"+w+"”, in the middle of a phrase. Say those words together as one group.")}
+      else if(g.kind==="short"){bad++;tips.push("The pause after “"+w+"” was too short ("+g.dur.toFixed(1)+"s). Pause for about half a second.")}});
+    punct.forEach((p,i)=>{if(p&&pm[i]&&pm[i].kind==="missing"){bad++;tips.push("No pause after “"+cw(tw[i])+"”. Stop briefly there so the listener can follow.")}});
+    if(!bad)tips.push("Your pauses sounded natural. Good rhythm.");
+    $("s-flow").textContent=bad?"Check":"Good"}
+  else{$("s-flow").textContent="–";tips.push("Pause check isn’t available on this device or browser. Word feedback still works.")}
+  const ul=$("tips");ul.innerHTML="";tips.slice(0,9).forEach(t=>{const li=document.createElement("li");li.textContent=t;ul.append(li)});
   $("result").scrollIntoView({behavior:"smooth",block:"nearest"})}
 
 let testing=false;
-$("test").onclick=async()=>{if(testing||listening)return;
-  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("live").textContent="The microphone isn’t reachable here. Open the page over https (for example GitHub Pages).";return}
-  try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});testing=true;$("meter").hidden=false;
-    const ctx=new (window.AudioContext||window.webkitAudioContext)(),an=ctx.createAnalyser();an.fftSize=512;ctx.createMediaStreamSource(stream).connect(an);
-    const buf=new Uint8Array(an.fftSize),end=Date.now()+5000;let peak=0;$("live").textContent="Say something for 5 seconds. The bar should move.";
+$("test").onclick=async()=>{if(testing)return;
+  if(listening&&rec){try{rec.abort()}catch(e){}}
+  const env="Page: "+location.protocol.replace(":","")+(window.self!==window.top?" (inside a frame)":"")+" · speech recognition: "+(SR?"yes":"no");
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("live").textContent="This browser can’t access the microphone on this page. "+env+". Open it over https or localhost in Chrome, Edge or Safari.";return}
+  $("live").textContent="Asking for the microphone… allow it if your browser asks. "+env;
+  const timer=setTimeout(()=>{if(!testing)$("live").textContent="No answer from the browser, so the microphone is probably blocked here. "+env+". Open this page in its own tab over https or localhost."},6000);
+  try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});clearTimeout(timer);testing=true;$("meter").hidden=false;
+    const ctx=new (window.AudioContext||window.webkitAudioContext)(),an=ctx.createAnalyser();an.fftSize=512;await ctx.resume();ctx.createMediaStreamSource(stream).connect(an);
+    const buf=new Uint8Array(an.fftSize),end=Date.now()+5000;let peak=0;$("live").textContent="Microphone found. Say something for 5 seconds. The bar should move.";
     (function loop(){an.getByteTimeDomainData(buf);let m=0;for(const v of buf)m=Math.max(m,Math.abs(v-128));peak=Math.max(peak,m);$("lvl").style.width=Math.min(100,m*2.5)+"%";
       if(Date.now()<end)requestAnimationFrame(loop);
       else{stream.getTracks().forEach(t=>t.stop());ctx.close();testing=false;$("meter").hidden=true;
-        $("live").textContent=peak>8?"Your microphone works. Tap the mic button to start.":"No sound picked up. Check the input device and that the mic isn’t muted."}})()
-  }catch(e){$("live").textContent="Microphone blocked. Click the lock icon in the address bar, allow Microphone, then reload."}};
+        $("live").textContent=peak>8?"Your microphone works. Tap the round mic button, wait for “Listening…”, then speak.":"The browser can open the microphone but hears silence. Choose the correct input device in your system sound settings and make sure it isn’t muted."}})()
+  }catch(e){clearTimeout(timer);
+    const m={NotAllowedError:"Microphone access is blocked. Click the lock icon in the address bar, set Microphone to Allow, then reload.",NotFoundError:"No microphone was found on this device.",NotReadableError:"The microphone is in use by another app. Close it and try again.",SecurityError:"The browser blocks the microphone on this page. Use https or localhost."}[e.name]||"Microphone error: "+e.name;
+    $("live").textContent=m+" ("+env+")"}}
 
 $("t-conv").onclick=()=>setMode("conv");$("t-drill").onclick=()=>setMode("drill");
 $("next").onclick=next;$("again").onclick=()=>setSentence(current);
@@ -279,6 +343,7 @@ $("say-btn").onclick=()=>speak(say,.95,1.12);
 $("clear").onclick=()=>{bestMap={};stats={attempts:0,days:[]};save();pills();$("result").hidden=true};
 if(!SR){$("unsup").hidden=false;$("rec").disabled=true}
 if(location.protocol==="file:"){$("unsup").hidden=false;$("unsup").textContent="Tip: from a local file, browsers often block the microphone. Upload to GitHub Pages (https) for reliable results."}
+if(window.self!==window.top){$("unsup").hidden=false;$("unsup").textContent="This page is running inside a frame or preview, which usually blocks the microphone. Open it in its own browser tab (or upload it to GitHub Pages) and try again."}
 $("daytip").textContent=TIPS[Math.floor(Date.now()/864e5)%TIPS.length];
 load();pills();setMode("conv");
 </script>
