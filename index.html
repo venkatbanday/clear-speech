@@ -2,248 +2,285 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Clear Speech – articulation practice</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Free speaking practice: learn what to say in everyday conversations and how to say it clearly.">
+<title>Clear Speech – learn what to say and how to say it</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#f3f6f4;--surface:#ffffff;--ink:#16211d;--muted:#5d6b65;--line:#d5ded9;
-  --accent:#0f6b5c;--accent-ink:#ffffff;--good:#1a7f4b;--goodbg:#d9f2e3;--bad:#b3261e;--badbg:#fbdcd8;--warn:#8a5a00;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#101614;--surface:#18211e;--ink:#e8f0ec;--muted:#98a8a1;--line:#2c3a35;
-  --accent:#4fd1b5;--accent-ink:#06211b;--good:#6fdc9f;--goodbg:#173a28;--bad:#ff8f86;--badbg:#431d1a;--warn:#f0c060;}}
+:root{--ink:#1c1a36;--muted:#645f86;--card:rgba(255,255,255,.74);--line:rgba(70,55,140,.16);--accent:#5b4bdb;--accent2:#ff6b4a;--good:#0d8a5c;--goodbg:#d6f5e6;--bad:#c2352b;--badbg:#fde0dc;--g1:#dfe9ff;--g2:#efe3ff;--g3:#ffe6d6;--serif:"Fraunces",Georgia,serif;--sans:"DM Sans",system-ui,sans-serif}
+@media(prefers-color-scheme:dark){:root{--ink:#eceaff;--muted:#a9a6cc;--card:rgba(255,255,255,.07);--line:rgba(255,255,255,.14);--accent:#a094ff;--accent2:#ff8a6b;--good:#6fe0a8;--goodbg:#12392b;--bad:#ff938a;--badbg:#431b19;--g1:#0f1233;--g2:#1c1445;--g3:#2a1530}body::before,body::after{opacity:.25!important}}
 *{box-sizing:border-box}
-html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font:17px/1.55 Georgia,"Iowan Old Style",serif;
-  padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
-main{max-width:760px;margin:0 auto;padding:20px 16px 48px}
-h1{font-size:1.7rem;margin:.2em 0 .1em;letter-spacing:-.01em}
-.sub{color:var(--muted);margin:0 0 18px;font-family:system-ui,sans-serif;font-size:.95rem}
-.bar,.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.bar{margin-bottom:14px}
-button,select,textarea{font:600 .95rem system-ui,sans-serif;color:var(--ink)}
-button,select{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;cursor:pointer}
-button:hover{border-color:var(--accent)}
-button:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
-button.rec.on{background:var(--bad);border-color:var(--bad);color:#fff;animation:pulse 1.2s infinite}
-@keyframes pulse{50%{opacity:.75}}
-@media (prefers-reduced-motion:reduce){button.rec.on{animation:none}}
-.panel{background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:20px;margin-bottom:14px}
-#target{font-size:1.75rem;line-height:1.5;margin:0 0 16px}
-#target span{padding:0 2px;border-radius:4px}
+html{height:100%}
+body{margin:0;min-height:100%;font:16px/1.55 var(--sans);color:var(--ink);background:linear-gradient(150deg,var(--g1),var(--g2) 55%,var(--g3)) fixed;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+body::before,body::after{content:"";position:fixed;z-index:-1;border-radius:50%;filter:blur(70px);opacity:.55}
+body::before{width:380px;height:380px;background:#8fb4ff;top:-90px;left:-90px}
+body::after{width:340px;height:340px;background:#ffb08f;bottom:-80px;right:-70px}
+main{max-width:820px;margin:0 auto;padding:22px 16px 56px}
+header{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+h1{font:700 1.9rem/1.1 var(--serif);margin:0;letter-spacing:-.01em}
+.tag{margin:2px 0 0;color:var(--muted);font-size:.95rem}
+.pills{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.pill{flex:1;min-width:96px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 12px;backdrop-filter:blur(10px)}
+.pill b{font:700 1.35rem var(--serif);display:block}.pill small{color:var(--muted)}
+.card{background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:22px;padding:22px;margin-bottom:16px;box-shadow:0 10px 40px -18px rgba(60,40,160,.35)}
+.tabs{display:inline-flex;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px;margin-bottom:12px}
+button{font:500 .95rem var(--sans);color:var(--ink);cursor:pointer}
+.tab{border:0;background:none;padding:9px 18px;border-radius:999px}
+.tab.on{background:var(--accent);color:#fff}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 12px;margin-bottom:6px;scrollbar-width:thin}
+.chip{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:7px 14px;white-space:nowrap}
+.chip.on{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent);font-weight:700}
+.ghost{border:1px solid var(--line);background:var(--card);border-radius:12px;padding:9px 14px}
+.ghost:hover,.chip:hover{border-color:var(--accent)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.lbl{color:var(--muted);font-size:.88rem;margin:0 0 6px}
+.bubble{display:flex;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:20px 20px 20px 4px;padding:14px 16px;margin-bottom:16px;max-width:560px}
+.bubble p{margin:0;font:500 1.3rem/1.35 var(--serif)}
+.round{width:40px;height:40px;flex:none;border-radius:50%;border:0;background:var(--accent);color:#fff;font-size:1rem;display:grid;place-items:center}
+#target{font:500 clamp(1.5rem,4.6vw,2.15rem)/1.5 var(--serif);margin:0 0 18px}
+#target span{padding:0 3px;border-radius:6px;cursor:pointer;transition:background .2s}
+#target span:hover{text-decoration:underline dotted}
 #target .ok{background:var(--goodbg);color:var(--good)}
-#target .miss{background:var(--badbg);color:var(--bad);text-decoration:underline wavy}
-.hint{font:.85rem system-ui,sans-serif;color:var(--muted)}
-#live{min-height:1.6em;font-style:italic;color:var(--muted);margin:12px 0 0}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
-.stat{text-align:center;border:1.5px solid var(--line);border-radius:12px;padding:12px 6px;background:var(--bg)}
-.stat b{display:block;font-size:1.8rem;font-family:Georgia,serif}
-.stat small{font:.8rem system-ui,sans-serif;color:var(--muted)}
-#tips{margin:0;padding-left:1.2em;font-family:system-ui,sans-serif;font-size:.95rem}
-#tips li{margin:.3em 0}
-textarea{width:100%;min-height:64px;border:1.5px solid var(--line);border-radius:10px;padding:10px;background:var(--bg);font-weight:400}
-.foot{font:.8rem system-ui,sans-serif;color:var(--muted);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-label.sl{font:.85rem system-ui,sans-serif;color:var(--muted);display:flex;gap:6px;align-items:center}
+#target .miss{background:var(--badbg);color:var(--bad)}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.mic{width:74px;height:74px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--accent),#8a6bff);color:#fff;display:grid;place-items:center;box-shadow:0 8px 24px -6px var(--accent);position:relative}
+.mic svg{width:30px;height:30px}
+.mic.on{background:var(--accent2);box-shadow:0 0 0 0 var(--accent2);animation:ring 1.3s infinite}
+@keyframes ring{70%{box-shadow:0 0 0 18px transparent}100%{box-shadow:0 0 0 0 transparent}}
+@media(prefers-reduced-motion:reduce){.mic.on{animation:none}}
+.mic:disabled{opacity:.4}
+.slider{display:flex;gap:6px;align-items:center;color:var(--muted);font-size:.88rem}
+.hint{color:var(--muted);font-size:.88rem;margin:10px 0 0;min-height:1.4em}
+#live{font-style:italic}
+.res{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.ring{position:relative;width:96px;height:96px}
+.ring svg{transform:rotate(-90deg)}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:700 1.45rem var(--serif)}
+.kv{display:flex;gap:22px}.kv div b{font:700 1.4rem var(--serif);display:block}.kv small{color:var(--muted)}
+.stars{font-size:1.5rem;color:#f5b301;letter-spacing:2px}
+#tips{margin:14px 0 0;padding-left:1.1em}#tips li{margin:.35em 0}
+.tip{display:flex;gap:12px;align-items:flex-start}
+.tip i{font-style:normal;font-size:1.5rem}
+select,input[type=range]{font:inherit}
+select{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px}
+.foot{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;color:var(--muted);font-size:.85rem}
+#meter{height:8px;background:var(--line);border-radius:4px;margin-top:12px}#lvl{height:100%;width:0;background:var(--accent);border-radius:4px}
 [hidden]{display:none!important}
 </style>
 </head>
 <body>
 <main>
-  <h1>Clear Speech</h1>
-  <p class="sub">Read the sentence aloud, get instant feedback on accuracy and pace, then try again.</p>
+<header>
+  <svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b4bdb"/><stop offset="1" stop-color="#ff6b4a"/></linearGradient></defs><rect width="52" height="52" rx="16" fill="url(#g)"/><g stroke="#fff" stroke-width="4" stroke-linecap="round"><path d="M13 22v8M20 16v20M27 20v12M34 12v28M41 22v8"/></g></svg>
+  <div><h1>Clear Speech</h1><p class="tag">Learn what to say, and how to say it clearly.</p></div>
+</header>
 
-  <div class="bar">
-    <select id="level" aria-label="Level"></select>
-    <button id="shuffle">Next sentence</button>
-    <button id="custom-toggle">Use my own text</button>
-  </div>
+<div class="pills">
+  <div class="pill"><b id="p-streak">0</b><small>day streak</small></div>
+  <div class="pill"><b id="p-att">0</b><small>attempts</small></div>
+  <div class="pill"><b id="p-mast">0</b><small>sentences mastered</small></div>
+</div>
 
-  <div id="custom" class="panel" hidden>
-    <textarea id="custom-text" placeholder="Type or paste a sentence you want to practice"></textarea>
-    <div class="row" style="margin-top:8px"><button id="custom-use" class="primary">Practice this</button></div>
-  </div>
+<div class="tabs" role="tablist">
+  <button class="tab on" id="t-conv" role="tab">Reply practice</button>
+  <button class="tab" id="t-drill" role="tab">Sound drills</button>
+</div>
+<div class="chips" id="chips"></div>
 
-  <div class="panel">
-    <p id="target" aria-live="polite"></p>
-    <div class="row">
-      <button id="listen">Listen</button>
-      <label class="sl">Speed <input type="range" id="rate" min="0.5" max="1.2" step="0.1" value="0.9"></label>
-      <button id="rec" class="primary rec">Start speaking</button>
-      <button id="retry">Reset</button>
-    </div>
-    <p id="live" aria-live="polite"></p>
-    <p id="unsupported" class="hint" hidden>Speech recognition isn’t available in this browser. Open this page in Chrome, Edge or Safari over https to get feedback.</p>
+<section class="card">
+  <div id="bubble">
+    <p class="lbl">Someone says to you:</p>
+    <div class="bubble"><button class="round" id="say-btn" aria-label="Hear it">▶</button><p id="say"></p></div>
+    <p class="lbl">Choose a reply and say it aloud:</p>
+    <div class="chips" id="replies" style="padding-bottom:8px"></div>
   </div>
+  <p id="target" aria-live="polite"></p>
+  <div class="controls">
+    <button class="mic" id="rec" aria-label="Start or stop speaking"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="12" rx="3" fill="currentColor"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+    <button class="ghost" id="listen">🔊 Hear a model</button>
+    <label class="slider">Speed <input type="range" id="rate" min="0.5" max="1.2" step="0.1" value="0.9"></label>
+    <button class="ghost" id="again">Try again</button>
+    <button class="ghost" id="next">Next</button>
+  </div>
+  <p class="hint" id="live">Tap the microphone, then read the sentence. Tap any word to hear it slowly.</p>
+  <p class="hint" id="unsup" hidden>Speech recognition isn’t available here. Use Chrome, Edge or Safari over https.</p>
+  <div id="meter" hidden><div id="lvl"></div></div>
+</section>
 
-  <div id="result" class="panel" hidden>
-    <div class="stats">
-      <div class="stat"><b id="s-acc">0%</b><small>Accuracy</small></div>
-      <div class="stat"><b id="s-wpm">0</b><small>Words per minute</small></div>
-      <div class="stat"><b id="s-best">0%</b><small>Best on this sentence</small></div>
-    </div>
-    <ul id="tips"></ul>
+<section class="card" id="result" hidden>
+  <div class="res">
+    <div class="ring"><svg width="96" height="96"><circle cx="48" cy="48" r="40" fill="none" stroke="var(--line)" stroke-width="9"/><circle id="arc" cx="48" cy="48" r="40" fill="none" stroke="var(--accent)" stroke-width="9" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3"/></svg><b id="s-acc">0%</b></div>
+    <div><div class="stars" id="stars"></div>
+      <div class="kv"><div><b id="s-wpm">0</b><small>words / min</small></div><div><b id="s-best">0%</b><small>your best</small></div></div></div>
   </div>
+  <ul id="tips"></ul>
+</section>
 
-  <div class="foot">
-    <span id="progress"></span>
-    <button id="clear" style="padding:4px 10px;font-weight:400">Clear progress</button>
-  </div>
+<section class="card tip"><i>💡</i><div><p class="lbl" style="margin:0">Tip of the day</p><p id="daytip" style="margin:2px 0 0"></p></div></section>
+
+<div class="foot">
+  <span>Accent <select id="accent" aria-label="Accent"><option value="en-US">American</option><option value="en-GB">British</option><option value="en-IN">Indian</option><option value="en-AU">Australian</option></select></span>
+  <span><button class="ghost" id="test">Test mic</button> <button class="ghost" id="clear">Clear progress</button></span>
+</div>
 </main>
 
 <script>
-const BANK={
-  "Warm-up: short and clear":[
-    "The quick brown fox jumps over the lazy dog.",
-    "Please call me back when you have a moment.",
-    "I would like to order a large coffee with milk.",
-    "Good communication begins with clear pronunciation.",
-    "Take a deep breath, slow down, and speak with confidence."],
-  "Tongue twisters":[
-    "She sells seashells by the seashore.",
-    "Peter Piper picked a peck of pickled peppers.",
-    "How can a clam cram in a clean cream can?",
-    "Red lorry, yellow lorry, red lorry, yellow lorry.",
-    "Unique New York, you know you need unique New York.",
-    "Six slippery snails slid slowly seaward.",
-    "Betty Botter bought some butter, but she said the butter’s bitter."],
-  "Professional":[
-    "Thank you for joining today’s meeting, let’s begin with a brief overview.",
-    "I appreciate your feedback and will follow up with a detailed plan by Friday.",
-    "Our team is committed to delivering reliable results on schedule.",
-    "Could you please clarify the requirements before we proceed?",
-    "The quarterly report shows steady growth across all regions."],
-  "Longer passages":[
-    "Public speaking is a skill that improves with practice, so speak slowly, pause between ideas, and finish every word.",
-    "When you articulate each consonant clearly and keep a steady rhythm, your audience understands you without effort.",
-    "Confidence comes from preparation: know your message, practice out loud, and listen carefully to your own voice."]
+const CONV={
+"Greetings":[
+"Good morning!|Good morning! How are you today?|Good morning. I hope you slept well.",
+"Hi, how are you?|I’m doing well, thank you. How about you?|Pretty good, thanks. And how are you?",
+"Nice to meet you.|Nice to meet you too. I’m glad we could connect.|It’s a pleasure to meet you.",
+"Good evening, how was your day?|It was busy, but good. How was yours?|Quite productive, thank you for asking.",
+"Long time no see!|It has been a while. How have you been?|Yes, it’s so good to see you again.",
+"Welcome to our office.|Thank you for having me. I’m happy to be here.|Thank you, it’s great to finally visit."],
+"Thank you & please":[
+"Thank you so much for your help.|You’re very welcome. I’m happy I could help.|No problem at all. Anytime.",
+"Thanks for coming today.|Thank you for inviting me. I enjoyed it.|My pleasure. It was a great meeting.",
+"Could you pass me that file, please?|Of course. Here you are.|Certainly, one moment please.",
+"I really appreciate your support.|It was no trouble at all. I’m glad to help.|That means a lot. Thank you for saying so.",
+"Sorry to keep you waiting.|That’s perfectly fine. Thank you for your time.|No worries. I just arrived myself.",
+"Would you like some tea or coffee?|Yes, please. Tea would be lovely.|No, thank you. I’m fine for now."],
+"Asking questions":[
+"Yes, go ahead. What’s your question?|I have a question about the schedule. Could you explain it?|Thank you. I’d like to understand the next steps.",
+"Do you have any questions?|Yes, I have one question. Could you repeat the last point?|Not right now, but I may have some later.",
+"Is everything clear so far?|Mostly, but could you explain the second part again?|Yes, that makes sense. Please continue.",
+"Can I help you with something?|Yes, I’m looking for the finance department. Where is it?|Yes, could you tell me how this works?",
+"What would you like to know?|Could you tell me more about the price and the delivery time?|I’d like to know how long this will take.",
+"Sorry, I didn’t catch that.|Of course. Let me say it again more slowly.|Certainly. I’ll repeat that for you."],
+"Work & meetings":[
+"Can you give us a quick update?|Certainly. The project is on track and will finish on Friday.|Sure. We have completed two tasks and the third is in progress.",
+"What do you think about this plan?|I think it’s a strong plan, but we should check the budget.|It looks good to me. I would only change the timeline.",
+"Are you available for a call tomorrow?|Yes, I’m free after two o’clock. Does that work for you?|Tomorrow morning works best for me. Shall we say ten?",
+"Could you send me the report today?|Absolutely. I will send it before the end of the day.|Yes, I’m finishing it now and will email it shortly.",
+"Why were you late this morning?|I’m sorry. My train was delayed, and I should have called.|Apologies for the delay. It won’t happen again.",
+"Tell me a little about yourself.|I’m a team player with five years of experience in customer support.|Of course. I enjoy solving problems and learning new skills."],
+"Phone calls":[
+"Hello, how may I help you?|Hello, I’d like to speak with Mr. Brown, please.|Hi, I’m calling about my order from last week.",
+"Could you hold the line, please?|Yes, of course. I’ll wait.|Sure. Thank you for checking.",
+"May I take a message?|Yes, please tell her that Sam called about the meeting.|Thank you. Please ask him to call me back this afternoon.",
+"Could you spell your name for me?|Certainly. It’s S, A, R, A, H.|Of course. Let me spell it slowly for you.",
+"I’m sorry, the line is breaking up.|Can you hear me better now? I will speak slowly.|Let me call you back in a minute on a better line."],
+"Shops & restaurants":[
+"Are you ready to order?|Yes, I’d like the grilled chicken with a green salad, please.|Not yet. Could you give us a few more minutes?",
+"Would you like anything else?|No, that’s everything, thank you. Could I have the bill?|Yes, a glass of water, please.",
+"How can I help you today?|I’m looking for a blue jacket in a medium size.|I’d like to return this item. Here is my receipt.",
+"That will be twenty dollars.|Certainly. Can I pay by card?|Here you are. Please keep the change.",
+"Is this seat taken?|No, please go ahead and sit.|Yes, I’m sorry. My friend is joining me shortly."],
+"Sorry & disagreeing":[
+"I’m sorry for the mistake.|Thank you for telling me. Let’s fix it together.|That’s all right. These things happen.",
+"I don’t agree with you.|I understand your point. May I explain my view?|That’s fair. Let’s look at the facts together.",
+"Excuse me, you’re in my way.|I’m very sorry. Please go ahead.|Oh, apologies. Let me move aside.",
+"I’m not happy with this service.|I’m sorry to hear that. Let me find a solution for you.|Thank you for your feedback. How can I make it right?",
+"Could we reschedule our meeting?|Yes, of course. What day suits you better?|No problem. Please send me a few options."],
+"Small talk":[
+"How was your weekend?|It was relaxing. I spent time with my family. And yours?|Very good, thanks. I went for a long walk by the river.",
+"Lovely weather today, isn’t it?|It is. I’m glad the sun is finally out.|Yes, it’s perfect for a walk after lunch.",
+"What do you do for a living?|I work as a designer for a small technology company.|I’m a teacher. I really enjoy working with students.",
+"Have a great day!|Thank you, you too! See you tomorrow.|Thanks! Take care and have a wonderful evening.",
+"Goodbye, it was nice talking to you.|Likewise. Let’s keep in touch.|Goodbye. Have a safe trip home."]
 };
+const DRILL={
+"Tongue twisters":["She sells seashells by the seashore.","Peter Piper picked a peck of pickled peppers.","How can a clam cram in a clean cream can?","Red lorry, yellow lorry, red lorry, yellow lorry.","Unique New York, you know you need unique New York.","Six slippery snails slid slowly seaward.","Betty Botter bought some butter, but she said the butter’s bitter."],
+"TH, R and L":["Three thin thieves thought they threw the third thing through.","This father and that mother gather together in the weather.","Really rural roads run right around the red river.","Larry likes light yellow lemon lollipops.","Please read the long letter to the lovely lady."],
+"S, SH, CH, J":["The sheep should shop for sharp shoes.","Choose cheap cheese and chew it cheerfully.","Jolly judges enjoy joking in January.","Sixty sleepy sailors sipped sweet soup.","Sam saw a sheep sitting on a ship."],
+"V, W, P, B":["Very well, we will visit Vienna in November.","Which witch wished for a warm vest?","Big blue bubbles bounced by the black bus.","Pat put the purple pepper pot in the pantry.","Victor visited Wendy on Wednesday."],
+"Word endings":["He walked, talked, and asked about the missed bus.","The last test asked about fast, soft, and kind words.","Next month’s facts and plans depend on clear results.","Hold the cold gold and fold the old scroll."],
+"Passages":["Public speaking is a skill that improves with practice, so speak slowly, pause between ideas, and finish every word.","When you articulate each consonant clearly and keep a steady rhythm, your audience understands you without effort.","Confidence comes from preparation: know your message, practice out loud, and listen carefully to your own voice.","Good morning, everyone. Thank you for joining us today. I would like to begin with a short overview of our goals."]
+};
+const TIPS=["Open your mouth a little wider. Clear vowels need space.","Finish every word, especially the last consonant.","Pause at commas and full stops. Silence sounds confident.","In conversation, aim for 110–160 words per minute.","Stress the important word in each phrase.","Smile slightly when you greet someone. It brightens your voice.","Take a calm breath before a long sentence.","Listen to the model, then repeat it right away, like an echo."];
 const $=id=>document.getElementById(id);
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-let current="",rec=null,listening=false,startT=0,finalText="",interim="",bestMap={},stats={attempts:0,days:[]};
+let mode="conv",cat="",item="",say="",replies=[],current="",rec=null,listening=false,startT=0,finalText="",interim="",bestMap={},stats={attempts:0,days:[]};
 
-// ---------- storage (safe) ----------
 function load(){try{bestMap=JSON.parse(localStorage.getItem("cs_best")||"{}");stats=JSON.parse(localStorage.getItem("cs_stats")||'{"attempts":0,"days":[]}')}catch(e){}}
 function save(){try{localStorage.setItem("cs_best",JSON.stringify(bestMap));localStorage.setItem("cs_stats",JSON.stringify(stats))}catch(e){}}
-function showProgress(){
-  const d=new Set(stats.days);let streak=0,t=new Date();
-  while(d.has(t.toDateString())){streak++;t.setDate(t.getDate()-1)}
-  $("progress").textContent=stats.attempts+" attempts · "+streak+"-day streak";
-}
+function pills(){const d=new Set(stats.days);let s=0,t=new Date();if(!d.has(t.toDateString()))t.setDate(t.getDate()-1);
+  while(d.has(t.toDateString())){s++;t.setDate(t.getDate()-1)}
+  $("p-streak").textContent=s;$("p-att").textContent=stats.attempts;$("p-mast").textContent=Object.values(bestMap).filter(v=>v>=90).length}
 
-// ---------- text helpers ----------
 const norm=w=>w.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9']/g,"");
 const words=s=>s.split(/\s+/).filter(Boolean);
-function lev(a,b){const m=[];for(let i=0;i<=a.length;i++){m[i]=[i];}for(let j=0;j<=b.length;j++)m[0][j]=j;
-  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)
-    m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length]}
+function lev(a,b){const m=[];for(let i=0;i<=a.length;i++)m[i]=[i];for(let j=0;j<=b.length;j++)m[0][j]=j;
+  for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length]}
 const same=(a,b)=>a===b||(a.length>=5&&b.length>=5&&lev(a,b)<=1);
+function align(t,s){const n=t.length,m=s.length,L=Array.from({length:n+1},()=>Array(m+1).fill(0));
+  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++)L[i][j]=same(t[i-1],s[j-1])?L[i-1][j-1]+1:Math.max(L[i-1][j],L[i][j-1]);
+  const h=Array(n).fill(false);let i=n,j=m;
+  while(i>0&&j>0){if(same(t[i-1],s[j-1])){h[i-1]=true;i--;j--}else if(L[i-1][j]>=L[i][j-1])i--;else j--}return h}
 
-function align(target,spoken){
-  const n=target.length,m=spoken.length,L=Array.from({length:n+1},()=>Array(m+1).fill(0));
-  for(let i=1;i<=n;i++)for(let j=1;j<=m;j++)
-    L[i][j]=same(target[i-1],spoken[j-1])?L[i-1][j-1]+1:Math.max(L[i-1][j],L[i][j-1]);
-  const hit=Array(n).fill(false);let i=n,j=m;
-  while(i>0&&j>0){
-    if(same(target[i-1],spoken[j-1])){hit[i-1]=true;i--;j--}
-    else if(L[i-1][j]>=L[i][j-1])i--;else j--;
-  }
-  return hit;
-}
+function speak(t,r=1,p=1){if(!("speechSynthesis" in window))return;speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(t);u.lang=$("accent").value;u.rate=r;u.pitch=p;speechSynthesis.speak(u)}
 
-// ---------- UI ----------
-function renderTarget(hits){
-  const el=$("target");el.innerHTML="";
-  words(current).forEach((w,i)=>{
-    const s=document.createElement("span");s.textContent=w;
-    if(hits)s.className=hits[i]?"ok":"miss";
-    el.append(s," ");
-  });
-}
-function setSentence(t){
-  current=t;renderTarget();$("result").hidden=true;$("live").textContent="";finalText="";interim="";
-}
-function pick(){
-  const list=BANK[$("level").value];let t;
-  do{t=list[Math.floor(Math.random()*list.length)]}while(t===current&&list.length>1);
-  setSentence(t);
-}
+function renderTarget(h){const el=$("target");el.innerHTML="";
+  words(current).forEach((w,i)=>{const s=document.createElement("span");s.textContent=w;s.title="Tap to hear this word";
+    if(h)s.className=h[i]?"ok":"miss";s.onclick=()=>speak(w.replace(/[^\w’'-]/g,""),.6);el.append(s," ")})}
+function setSentence(t){current=t;renderTarget();$("result").hidden=true;finalText="";interim="";
+  $("live").textContent="Tap the microphone, then read the sentence. Tap any word to hear it slowly."}
 
-// ---------- listen (model voice) ----------
-$("listen").onclick=()=>{
-  if(!("speechSynthesis" in window))return;
-  speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(current);u.lang="en-US";u.rate=parseFloat($("rate").value);
-  speechSynthesis.speak(u);
-};
+function chips(){const box=$("chips");box.innerHTML="";
+  Object.keys(mode==="conv"?CONV:DRILL).forEach(c=>{const b=document.createElement("button");b.className="chip"+(c===cat?" on":"");b.textContent=c;
+    b.onclick=()=>{cat=c;chips();next()};box.append(b)})}
+function setMode(m){mode=m;cat=Object.keys(m==="conv"?CONV:DRILL)[0];
+  $("t-conv").classList.toggle("on",m==="conv");$("t-drill").classList.toggle("on",m==="drill");chips();next()}
+function showReply(i){current=replies[i];[...$("replies").children].forEach((b,k)=>b.classList.toggle("on",k===i));setSentence(replies[i])}
+function next(){const list=(mode==="conv"?CONV:DRILL)[cat];let t;
+  do{t=list[Math.floor(Math.random()*list.length)]}while(t===item&&list.length>1);item=t;
+  $("bubble").hidden=mode!=="conv";
+  if(mode==="conv"){const p=t.split("|");say=p[0];replies=p.slice(1);$("say").textContent=say;
+    const box=$("replies");box.innerHTML="";replies.forEach((r,i)=>{const b=document.createElement("button");b.className="chip";b.textContent="Reply "+(i+1);b.onclick=()=>showReply(i);box.append(b)});showReply(0)}
+  else setSentence(t)}
 
-// ---------- record ----------
-function startRec(){
-  if(!SR)return;
-  speechSynthesis.cancel();
-  rec=new SR();rec.lang="en-US";rec.interimResults=true;rec.continuous=true;rec.maxAlternatives=1;
-  finalText="";interim="";startT=0;
-  rec.onstart=()=>{listening=true;$("rec").textContent="Stop";$("rec").classList.add("on");$("live").textContent="Listening… read the sentence now."};
+function startRec(){if(!SR)return;speechSynthesis.cancel();
+  rec=new SR();rec.lang=$("accent").value;rec.interimResults=true;rec.continuous=true;finalText="";interim="";startT=0;
+  rec.onstart=()=>{listening=true;$("rec").classList.add("on");$("live").textContent="Listening… read the sentence now, then tap again."};
   rec.onspeechstart=()=>{if(!startT)startT=Date.now()};
-  rec.onresult=e=>{
-    if(!startT)startT=Date.now();
-    interim="";
-    for(let i=e.resultIndex;i<e.results.length;i++){
-      const t=e.results[i][0].transcript;
-      if(e.results[i].isFinal)finalText+=t+" ";else interim+=t;
-    }
-    $("live").textContent="“"+(finalText+interim).trim()+"”";
-  };
-  rec.onerror=e=>{
-    const msg={"not-allowed":"Microphone access was blocked. Allow the mic in your browser settings and try again.",
-      "no-speech":"No speech detected. Move closer to the mic and try again.",
-      "audio-capture":"No microphone found."}[e.error]||"Recognition error: "+e.error;
-    $("live").textContent=msg;
-  };
-  rec.onend=()=>{listening=false;$("rec").textContent="Start speaking";$("rec").classList.remove("on");finish()};
-  try{rec.start()}catch(e){}
-}
-function stopRec(){if(rec&&listening)rec.stop()}
-$("rec").onclick=()=>listening?stopRec():startRec();
+  rec.onresult=e=>{if(!startT)startT=Date.now();interim="";
+    for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)finalText+=t+" ";else interim+=t}
+    $("live").textContent="“"+(finalText+interim).trim()+"”"};
+  rec.onerror=e=>{$("live").textContent={"not-allowed":"Microphone blocked. Allow it in your browser’s address bar, then reload.","no-speech":"No speech detected. Try Test mic below, then speak closer to the mic.","audio-capture":"No microphone found."}[e.error]||"Recognition error: "+e.error};
+  rec.onend=()=>{listening=false;$("rec").classList.remove("on");finish()};
+  try{rec.start()}catch(e){}}
+$("rec").onclick=()=>listening?rec.stop():startRec();
 
-// ---------- feedback ----------
-function finish(){
-  const spokenRaw=(finalText+interim).trim();
-  if(!spokenRaw)return;
-  const dur=Math.max((Date.now()-(startT||Date.now()))/1000,1);
-  const tw=words(current),tn=tw.map(norm),sn=words(spokenRaw).map(norm).filter(Boolean);
-  const hits=align(tn,sn),got=hits.filter(Boolean).length;
-  const acc=Math.round(got/tw.length*100),wpm=Math.round(sn.length/dur*60);
-  renderTarget(hits);
-  $("result").hidden=false;$("s-acc").textContent=acc+"%";$("s-wpm").textContent=wpm;
-  const prev=bestMap[current]||0;bestMap[current]=Math.max(prev,acc);$("s-best").textContent=bestMap[current]+"%";
-  stats.attempts++;const today=new Date().toDateString();if(!stats.days.includes(today))stats.days.push(today);
-  save();showProgress();
-
-  const tips=[];
-  const missed=tw.filter((_,i)=>!hits[i]).map(w=>w.replace(/[^\w’'-]/g,""));
-  if(acc>=95)tips.push("Excellent. Every word came through clearly. Try the next sentence or raise the difficulty.");
-  else if(acc>=75)tips.push("Good attempt. Most words were clear; focus on the highlighted ones below.");
-  else tips.push("Slow down and say each word fully. Use Listen at a slower speed, then repeat after it.");
-  if(missed.length)tips.push("Practise these words on their own, exaggerating the consonants: "+missed.slice(0,8).join(", ")+".");
-  if(sn.length>=4){
-    if(wpm>170)tips.push("You’re rushing at "+wpm+" words per minute. Aim for 110–160 and pause briefly at commas.");
-    else if(wpm<90)tips.push("Your pace is slow at "+wpm+" words per minute. Aim for 110–160 with a steady rhythm.");
-    else tips.push("Your pace of "+wpm+" words per minute is in a comfortable range.");
-  }
-  if(sn.length>tw.length+2)tips.push("You added extra words. Stick to the sentence as written.");
+function finish(){const raw=(finalText+interim).trim();if(!raw)return;
+  const dur=Math.max((Date.now()-(startT||Date.now()))/1000,1),tw=words(current),tn=tw.map(norm),sn=words(raw).map(norm).filter(Boolean);
+  const h=align(tn,sn),acc=Math.round(h.filter(Boolean).length/tw.length*100),wpm=Math.round(sn.length/dur*60);
+  renderTarget(h);$("result").hidden=false;$("s-acc").textContent=acc+"%";$("s-wpm").textContent=wpm;
+  $("arc").style.strokeDashoffset=251.3*(1-acc/100);
+  const st=acc>=90?3:acc>=75?2:acc>=50?1:0;$("stars").textContent="★".repeat(st)+"☆".repeat(3-st);
+  bestMap[current]=Math.max(bestMap[current]||0,acc);$("s-best").textContent=bestMap[current]+"%";
+  stats.attempts++;const d=new Date().toDateString();if(!stats.days.includes(d))stats.days.push(d);save();pills();
+  const miss=tw.filter((_,i)=>!h[i]).map(w=>w.replace(/[^\w’'-]/g,"")),tips=[];
+  tips.push(acc>=95?"Excellent. Every word came through clearly. Move on to the next one.":acc>=75?"Good attempt. Most words were clear. Work on the red words.":"Slow down and say every word fully. Hear the model, then repeat it like an echo.");
+  if(miss.length)tips.push("Tap these red words to hear them, then say each one slowly: "+miss.slice(0,8).join(", ")+".");
+  if(sn.length>=4)tips.push(wpm>170?"You’re rushing at "+wpm+" words per minute. Aim for 110–160 and pause at commas.":wpm<90?"Your pace is slow at "+wpm+" words per minute. Aim for 110–160 with a steady rhythm.":"Your pace of "+wpm+" words per minute is comfortable.");
+  if(sn.length>tw.length+2)tips.push("You added extra words. Try to say the sentence exactly as written.");
   const ul=$("tips");ul.innerHTML="";tips.forEach(t=>{const li=document.createElement("li");li.textContent=t;ul.append(li)});
-}
+  $("result").scrollIntoView({behavior:"smooth",block:"nearest"})}
 
-// ---------- wiring ----------
-Object.keys(BANK).forEach(k=>{const o=document.createElement("option");o.textContent=k;$("level").append(o)});
-$("level").onchange=pick;$("shuffle").onclick=pick;$("retry").onclick=()=>setSentence(current);
-$("custom-toggle").onclick=()=>{$("custom").hidden=!$("custom").hidden};
-$("custom-use").onclick=()=>{const t=$("custom-text").value.trim();if(t){setSentence(t);$("custom").hidden=true}};
-$("clear").onclick=()=>{bestMap={};stats={attempts:0,days:[]};save();showProgress();$("result").hidden=true};
-if(!SR){$("unsupported").hidden=false;$("rec").disabled=true}
-load();showProgress();pick();
+let testing=false;
+$("test").onclick=async()=>{if(testing||listening)return;
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){$("live").textContent="The microphone isn’t reachable here. Open the page over https (for example GitHub Pages).";return}
+  try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});testing=true;$("meter").hidden=false;
+    const ctx=new (window.AudioContext||window.webkitAudioContext)(),an=ctx.createAnalyser();an.fftSize=512;ctx.createMediaStreamSource(stream).connect(an);
+    const buf=new Uint8Array(an.fftSize),end=Date.now()+5000;let peak=0;$("live").textContent="Say something for 5 seconds. The bar should move.";
+    (function loop(){an.getByteTimeDomainData(buf);let m=0;for(const v of buf)m=Math.max(m,Math.abs(v-128));peak=Math.max(peak,m);$("lvl").style.width=Math.min(100,m*2.5)+"%";
+      if(Date.now()<end)requestAnimationFrame(loop);
+      else{stream.getTracks().forEach(t=>t.stop());ctx.close();testing=false;$("meter").hidden=true;
+        $("live").textContent=peak>8?"Your microphone works. Tap the mic button to start.":"No sound picked up. Check the input device and that the mic isn’t muted."}})()
+  }catch(e){$("live").textContent="Microphone blocked. Click the lock icon in the address bar, allow Microphone, then reload."}};
+
+$("t-conv").onclick=()=>setMode("conv");$("t-drill").onclick=()=>setMode("drill");
+$("next").onclick=next;$("again").onclick=()=>setSentence(current);
+$("listen").onclick=()=>speak(current,parseFloat($("rate").value));
+$("say-btn").onclick=()=>speak(say,.95,1.12);
+$("clear").onclick=()=>{bestMap={};stats={attempts:0,days:[]};save();pills();$("result").hidden=true};
+if(!SR){$("unsup").hidden=false;$("rec").disabled=true}
+if(location.protocol==="file:"){$("unsup").hidden=false;$("unsup").textContent="Tip: from a local file, browsers often block the microphone. Upload to GitHub Pages (https) for reliable results."}
+$("daytip").textContent=TIPS[Math.floor(Date.now()/864e5)%TIPS.length];
+load();pills();setMode("conv");
 </script>
 </body>
 </html>
