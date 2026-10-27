@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="author" content="Venkateswara Rao Banday">
 <meta name="description" content="Free speaking practice: learn what to say in everyday conversations and how to say it clearly.">
 <title>Clear Speech – learn what to say and how to say it</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙️</text></svg>">
@@ -70,6 +71,10 @@ select,input[type=range]{font:inherit}
 select{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px}
 .foot{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;color:var(--muted);font-size:.85rem}
 #meter{height:8px;background:var(--line);border-radius:4px;margin-top:12px}#lvl{height:100%;width:0;background:var(--accent);border-radius:4px}
+.by{margin:3px 0 0;font-size:.82rem;color:var(--muted)}
+.own{display:flex;gap:8px;margin-top:12px}.own input{flex:1;min-width:0;font:inherit;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+details summary{cursor:pointer}details ol{margin:10px 0 0;padding-left:1.2em}
+.chk{display:inline-flex;gap:6px;align-items:center}
 [hidden]{display:none!important}
 </style>
 </head>
@@ -77,11 +82,12 @@ select{border:1px solid var(--line);background:var(--card);color:var(--ink);bord
 <main>
 <header>
   <svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b4bdb"/><stop offset="1" stop-color="#ff6b4a"/></linearGradient></defs><rect width="52" height="52" rx="16" fill="url(#g)"/><g stroke="#fff" stroke-width="4" stroke-linecap="round"><path d="M13 22v8M20 16v20M27 20v12M34 12v28M41 22v8"/></g></svg>
-  <div><h1>Clear Speech</h1><p class="tag">Learn what to say, and how to say it clearly.</p></div>
+  <div><h1>Clear Speech</h1><p class="tag">Learn what to say, and how to say it clearly.</p><p class="by">Created by <b>Venkateswara Rao Banday</b> · built with Claude</p></div>
 </header>
 
 <div class="pills">
   <div class="pill"><b id="p-streak">0</b><small>day streak</small></div>
+  <div class="pill"><b id="p-today">0/5</b><small>today’s goal</small></div>
   <div class="pill"><b id="p-att">0</b><small>attempts</small></div>
   <div class="pill"><b id="p-mast">0</b><small>sentences mastered</small></div>
 </div>
@@ -106,10 +112,13 @@ select{border:1px solid var(--line);background:var(--card);color:var(--ink);bord
     <label class="slider">Speed <input type="range" id="rate" min="0.5" max="1.2" step="0.1" value="0.9"></label>
     <button class="ghost" id="again">Try again</button>
     <button class="ghost" id="next">Next</button>
+    <button class="ghost" id="mine">✏️ My text</button>
   </div>
   <p class="hint" id="live">Tap the microphone, then read the sentence. Tap any word to hear it slowly.</p>
   <p class="hint" id="unsup" hidden>Speech recognition isn’t available here. Use Chrome, Edge or Safari over https.</p>
   <div id="meter" hidden><div id="lvl"></div></div>
+  <div class="own" id="own" hidden><input id="own-in" placeholder="Type or paste a sentence to practise" aria-label="Your own sentence"><button class="ghost" id="own-go">Practise</button></div>
+  <div id="playwrap" hidden style="margin-top:12px"><p class="lbl">Hear yourself:</p><audio id="play" controls style="width:100%"></audio></div>
 </section>
 
 <section class="card" id="result" hidden>
@@ -126,8 +135,12 @@ select{border:1px solid var(--line);background:var(--card);color:var(--ink);bord
 
 <div class="foot">
   <span>Accent <select id="accent" aria-label="Accent"><option value="en-US">American</option><option value="en-GB">British</option><option value="en-IN">Indian</option><option value="en-AU">Australian</option></select></span>
-  <span><button class="ghost" id="test">Test mic</button> <button class="ghost" id="clear">Clear progress</button></span>
+  <label class="chk"><input type="checkbox" id="pc" checked> Pause check &amp; playback</label>
+  <span><button class="ghost" id="test">Test mic</button> <button class="ghost" id="share">Share</button> <button class="ghost" id="clear">Clear progress</button></span>
 </div>
+<details class="card" style="margin-top:16px"><summary><b>How to use</b></summary>
+<ol><li>Pick a situation in Reply practice, or a sound in Sound drills.</li><li>Press Hear a model, then tap the mic and read the sentence aloud.</li><li>Fix the amber, red and ⏸ marks, then try again until the sentence is clean.</li><li>Use My text to practise your own words, and aim for 5 tries a day.</li></ol></details>
+<p class="by" style="text-align:center;margin-top:18px">Created by <b>Venkateswara Rao Banday</b> · Built with Claude (Anthropic) · Free for everyone</p>
 </main>
 
 <script>
@@ -184,6 +197,21 @@ const CONV={
 "What do you do for a living?|I work as a designer for a small technology company.|I’m a teacher. I really enjoy working with students.",
 "Have a great day!|Thank you, you too! See you tomorrow.|Thanks! Take care and have a wonderful evening.",
 "Goodbye, it was nice talking to you.|Likewise. Let’s keep in touch.|Goodbye. Have a safe trip home."]
+,"Travel & directions":[
+"Excuse me, where is the nearest station?|It’s about five minutes from here. Go straight and turn left.|Sorry, I’m not from here. Let me check the map for you.",
+"Can I see your passport, please?|Certainly. Here is my passport and ticket.|Of course. I’m here for a short holiday.",
+"Is this the right bus for the city center?|Yes, this bus goes straight to the city center.|No, you need the next one. It leaves in ten minutes.",
+"Would you like a window or an aisle seat?|A window seat, please.|An aisle seat would be great, thank you."],
+"Health & doctor":[
+"What seems to be the problem?|I’ve had a headache and a sore throat since yesterday.|I have a pain in my back that gets worse when I sit.",
+"How long have you had these symptoms?|About three days. They are getting a little worse.|Since Monday. I also feel very tired.",
+"Are you allergic to any medicine?|No, I don’t have any known allergies.|Yes, I’m allergic to penicillin.",
+"Take this twice a day after meals.|Thank you, doctor. Should I come back next week?|Understood. Is there anything I should avoid?"],
+"Job interview":[
+"Why do you want to work here?|I admire your company’s mission, and I believe my skills are a good match.|I’m excited about this role because it lets me learn and contribute.",
+"What is your greatest strength?|I’m reliable and I communicate clearly with my team.|I stay calm under pressure and solve problems quickly.",
+"Do you have any questions for us?|Yes, what does a typical day look like in this role?|Yes, could you tell me about the next steps in the process?",
+"When can you start?|I can start within two weeks of an offer.|I’m available to start immediately."]
 };
 const DRILL={
 "Tongue twisters":["She sells seashells by the seashore.","Peter Piper picked a peck of pickled peppers.","How can a clam cram in a clean cream can?","Red lorry, yellow lorry, red lorry, yellow lorry.","Unique New York, you know you need unique New York.","Six slippery snails slid slowly seaward.","Betty Botter bought some butter, but she said the butter’s bitter."],
@@ -202,9 +230,12 @@ function load(){try{bestMap=JSON.parse(localStorage.getItem("cs_best")||"{}");st
 function save(){try{localStorage.setItem("cs_best",JSON.stringify(bestMap));localStorage.setItem("cs_stats",JSON.stringify(stats))}catch(e){}}
 function pills(){const d=new Set(stats.days);let s=0,t=new Date();if(!d.has(t.toDateString()))t.setDate(t.getDate()-1);
   while(d.has(t.toDateString())){s++;t.setDate(t.getDate()-1)}
-  $("p-streak").textContent=s;$("p-att").textContent=stats.attempts;$("p-mast").textContent=Object.values(bestMap).filter(v=>v>=90).length}
+  $("p-streak").textContent=s;const td=stats.today&&stats.today.d===new Date().toDateString()?stats.today.n:0;$("p-today").textContent=Math.min(td,5)+"/5"+(td>=5?" 🎉":"");$("p-att").textContent=stats.attempts;$("p-mast").textContent=Object.values(bestMap).filter(v=>v>=90).length}
 
 const norm=w=>w.toLowerCase().replace(/[’']/g,"'").replace(/[^a-z0-9']/g,"");
+const ones="zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split(" "),tens="_ _ twenty thirty forty fifty sixty seventy eighty ninety".split(" ");
+function n2w(n){if(n<20)return ones[n];if(n<100)return tens[Math.floor(n/10)]+(n%10?" "+ones[n%10]:"");if(n<1000)return ones[Math.floor(n/100)]+" hundred"+(n%100?" "+n2w(n%100):"");return String(n).split("").map(d=>ones[d]).join(" ")}
+const fixNum=t=>t.replace(/\$(\d+)/g,"$1 dollars").replace(/(\d+)%/g,"$1 percent").replace(/(\d+):(\d+)/g,"$1 $2").replace(/\d+/g,m=>n2w(+m));
 const words=s=>s.split(/\s+/).filter(Boolean);
 function lev(a,b){const m=[];for(let i=0;i<=a.length;i++)m[i]=[i];for(let j=0;j<=b.length;j++)m[0][j]=j;
   for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)m[i][j]=Math.min(m[i-1][j]+1,m[i][j-1]+1,m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return m[a.length][b.length]}
@@ -228,7 +259,7 @@ function renderTarget(st,pm){const el=$("target");el.innerHTML="";
     sp.onclick=()=>speak(w.replace(/[^\w’'-]/g,""),.6);el.append(sp);
     const g=pm&&pm[i];if(g){const e=document.createElement("em");e.className="pz"+(g.kind==="good"?"":" bad");e.textContent=g.kind==="missing"?"⏸ add a pause":"⏸ "+g.dur.toFixed(1)+"s";el.append(e)}
     el.append(" ")})}
-function setSentence(t){current=t;renderTarget();$("result").hidden=true;finalText="";interim="";
+function setSentence(t){current=t;renderTarget();$("result").hidden=true;$("playwrap").hidden=true;finalText="";interim="";
   $("live").textContent="Tap the microphone, then read the sentence. Tap any word to hear it slowly."}
 
 function chips(){const box=$("chips");box.innerHTML="";
@@ -251,7 +282,9 @@ function startMeter(){aud=null;if(!navigator.mediaDevices||!navigator.mediaDevic
     const ctx=new (window.AudioContext||window.webkitAudioContext)(),an=ctx.createAnalyser();an.fftSize=1024;ctx.createMediaStreamSource(stream).connect(an);
     const buf=new Float32Array(an.fftSize),lv=[];
     const id=setInterval(()=>{an.getFloatTimeDomainData(buf);let q=0;for(const v of buf)q+=v*v;lv.push(Math.sqrt(q/buf.length))},50);
-    aud={lv,stop(){clearInterval(id);stream.getTracks().forEach(t=>t.stop());ctx.close()}}}).catch(()=>{})}
+    let mr=null;const ch=[];try{mr=new MediaRecorder(stream);mr.ondataavailable=e=>{if(e.data.size)ch.push(e.data)};
+      mr.onstop=()=>{if(ch.length){$("play").src=URL.createObjectURL(new Blob(ch,{type:mr.mimeType}));$("playwrap").hidden=false}};mr.start()}catch(e){mr=null}
+    aud={lv,stop(){clearInterval(id);if(mr&&mr.state!=="inactive")mr.stop();stream.getTracks().forEach(t=>t.stop());ctx.close()}}}).catch(()=>{})}
 function runs(v){const r=[];let a=0;for(let i=1;i<=v.length;i++)if(i===v.length||v[i]!==v[a]){r.push({v:v[a],a,n:i-a});a=i}return r}
 function pauses(lv){if(!lv||lv.length<20)return null;
   const so=[...lv].sort((a,b)=>a-b),noise=so[Math.floor(so.length*.1)],peak=so[Math.floor(so.length*.95)];if(peak<.01)return null;
@@ -273,19 +306,19 @@ function hint(t,h){const r=re=>t.replace(re,"")===h.replace(re,"");
 
 function startRec(){if(!SR)return;speechSynthesis.cancel();
   rec=new SR();rec.lang=$("accent").value;rec.interimResults=true;rec.continuous=true;finalText="";interim="";startT=0;
-  rec.onstart=()=>{listening=true;$("rec").classList.add("on");$("live").textContent="Listening… read the sentence now, then tap again.";startMeter()};
+  rec.onstart=()=>{listening=true;$("rec").classList.add("on");$("live").textContent="Listening… read the sentence now, then tap again.";if($("pc").checked)startMeter()};
   rec.onspeechstart=()=>{if(!startT)startT=Date.now()};
   rec.onresult=e=>{if(!startT)startT=Date.now();interim="";
     for(let i=e.resultIndex;i<e.results.length;i++){const t=e.results[i][0].transcript;if(e.results[i].isFinal)finalText+=t+" ";else interim+=t}
     $("live").textContent="“"+(finalText+interim).trim()+"”"};
-  rec.onerror=e=>{$("live").textContent={"not-allowed":"Microphone blocked. Allow it in your browser’s address bar, then reload.","no-speech":"No speech detected. Try Test mic below, then speak closer to the mic.","audio-capture":"No microphone found."}[e.error]||"Recognition error: "+e.error};
+  rec.onerror=e=>{$("live").textContent={"not-allowed":"Microphone blocked. Allow it in your browser’s address bar, then reload.","no-speech":"No speech detected. Check that your browser can use the microphone and that the right one is selected. If it keeps happening, switch off “Pause check & playback” below and try again.","audio-capture":"No microphone found."}[e.error]||"Recognition error: "+e.error};
   rec.onend=()=>{listening=false;$("rec").classList.remove("on");finish()};
   try{rec.start()}catch(e){}}
 $("rec").onclick=()=>listening?rec.stop():startRec();
 
 function finish(){const A=aud;aud=null;if(A)A.stop();
   const raw=(finalText+interim).trim();if(!raw)return;
-  const dur=Math.max((Date.now()-(startT||Date.now()))/1000,1),tw=words(current),n=tw.length,tn=tw.map(norm),sn=words(raw).map(norm).filter(Boolean),cw=w=>w.replace(/[^\w’'-]/g,"");
+  const dur=Math.max((Date.now()-(startT||Date.now()))/1000,1),tw=words(current),n=tw.length,tn=tw.map(norm),sn=words(fixNum(raw)).map(norm).filter(Boolean),cw=w=>w.replace(/[^\w’'-]/g,"");
   const{st,extra}=align(tn,sn),acc=Math.round(st.filter(x=>x.k==="ok").length/n*100),wpm=Math.round(sn.length/dur*60);
   const punct=tw.map((w,i)=>i<n-1&&/[,;:.!?]$/.test(w)),pa=A?pauses(A.lv):null,pm={},pt=[];let bad=0;
   if(pa){pa.gaps.filter(g=>g.dur>=.2).forEach(g=>{
@@ -298,7 +331,7 @@ function finish(){const A=aud;aud=null;if(A)A.stop();
   $("arc").style.strokeDashoffset=251.3*(1-acc/100);
   const sr=acc>=90?3:acc>=75?2:acc>=50?1:0;$("stars").textContent="★".repeat(sr)+"☆".repeat(3-sr);
   bestMap[current]=Math.max(bestMap[current]||0,acc);$("s-best").textContent=bestMap[current]+"%";
-  stats.attempts++;const d=new Date().toDateString();if(!stats.days.includes(d))stats.days.push(d);save();pills();
+  stats.attempts++;const d=new Date().toDateString();if(!stats.days.includes(d))stats.days.push(d);stats.today=stats.today&&stats.today.d===d?{d,n:stats.today.n+1}:{d,n:1};save();pills();
   const tips=[];
   tips.push(acc>=95?"Excellent. Every word came through clearly. Move on to the next one.":acc>=75?"Good attempt. Most words were clear. Work on the highlighted words.":"Slow down and say every word fully. Hear the model, then repeat it like an echo.");
   st.forEach((x,i)=>{if(x.k==="sub"&&tips.length<5)tips.push("“"+cw(tw[i])+"” sounded like “"+x.h+"”. "+hint(tn[i],x.h))});
@@ -334,8 +367,14 @@ $("test").onclick=async()=>{if(testing)return;
         $("live").textContent=peak>8?"Your microphone works. Tap the round mic button, wait for “Listening…”, then speak.":"The browser can open the microphone but hears silence. Choose the correct input device in your system sound settings and make sure it isn’t muted."}})()
   }catch(e){clearTimeout(timer);
     const m={NotAllowedError:"Microphone access is blocked. Click the lock icon in the address bar, set Microphone to Allow, then reload.",NotFoundError:"No microphone was found on this device.",NotReadableError:"The microphone is in use by another app. Close it and try again.",SecurityError:"The browser blocks the microphone on this page. Use https or localhost."}[e.name]||"Microphone error: "+e.name;
-    $("live").textContent=m+" ("+env+")"}}
+    $("live").textContent=m+" ("+env+")"}};
 
+$("mine").onclick=()=>{$("own").hidden=!$("own").hidden;if(!$("own").hidden)$("own-in").focus()};
+$("own-go").onclick=()=>{const t=$("own-in").value.trim();if(!t)return;$("bubble").hidden=true;item=t;setSentence(t)};
+$("own-in").onkeydown=e=>{if(e.key==="Enter")$("own-go").click()};
+$("share").onclick=async()=>{const u=location.href,t="Clear Speech: free speaking and articulation practice";
+  try{if(navigator.share)await navigator.share({title:t,text:t,url:u});else{await navigator.clipboard.writeText(u);$("live").textContent="Link copied. Share it with friends."}}catch(e){}};
+if(/Android|iPhone|iPad/i.test(navigator.userAgent))$("pc").checked=false;
 $("t-conv").onclick=()=>setMode("conv");$("t-drill").onclick=()=>setMode("drill");
 $("next").onclick=next;$("again").onclick=()=>setSentence(current);
 $("listen").onclick=()=>speak(current,parseFloat($("rate").value));
